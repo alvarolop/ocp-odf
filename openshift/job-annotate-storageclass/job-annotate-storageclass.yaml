@@ -23,6 +23,5 @@ spec:
             echo "Hello!! This is a test"
       dnsPolicy: ClusterFirst
       restartPolicy: Never
-      serviceAccount: job-patch-console
-      serviceAccountName: job-patch-console
+      serviceAccountName: job-annotate-storageclass
       terminationGracePeriodSeconds: 30

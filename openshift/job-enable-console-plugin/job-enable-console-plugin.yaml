@@ -27,6 +27,5 @@ spec:
             fi
       dnsPolicy: ClusterFirst
       restartPolicy: Never
-      serviceAccount: job-patch-console
-      serviceAccountName: job-patch-console
+      serviceAccountName: job-enable-console-plugin
       terminationGracePeriodSeconds: 30
