@@ -1,0 +1,69 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: patch-console
+  namespace: openshift-logging
+rules:
+- apiGroups:
+  - operator.openshift.io
+  resources:
+  - consoles
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: job-patch-console
+  namespace: openshift-logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: patch-console
+  namespace: openshift-logging
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: patch-console
+subjects:
+- kind: ServiceAccount
+  name: job-patch-console
+  namespace: openshift-logging
+---
+# create one installplan-approver job per manual operator
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: enable-console-plugin
+  namespace: openshift-logging
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 10
+  activeDeadlineSeconds: 240
+  template:
+    spec:
+      containers:
+      - name: secret-creation
+        image: reg99.domain.local:8443/ocp-support/openshift4/ose-cli:v4.12
+        imagePullPolicy: Always
+        command:
+          - /bin/bash
+          - -c
+          - |
+            if ! oc get console.operator.openshift.io cluster -o yaml  | grep "logging-view-plugin";\
+            then \
+              oc patch console.operator.openshift.io cluster --type=json   \
+              --patch '[{"op":"add","path":"/spec/plugins/-","value":"logging-view-plugin"}]'
+            fi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccount: job-patch-console
+      serviceAccountName: job-patch-console
+      terminationGracePeriodSeconds: 30
+...

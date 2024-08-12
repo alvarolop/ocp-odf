@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+
+  - lso-operator
+  - odf-operator
+
+  - lvs-lso-volumeset.yaml
+  - lvd-auto-discover-devices.yaml
+  - storagecluster-ocs-storagecluster.yaml
+
+  - job-enable-console-plugin
+  - job-annotate-storageclass
+  # After that, you need to manually annotate the StorageClass to default

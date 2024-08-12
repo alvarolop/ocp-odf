@@ -1,0 +1,28 @@
+---
+apiVersion: local.storage.openshift.io/v1alpha1
+kind: LocalVolumeSet
+metadata:
+  name: lso-volumeset
+  namespace: openshift-local-storage
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deviceInclusionSpec:
+    deviceMechanicalProperties:
+      - NonRotational
+    deviceTypes:
+      - disk
+      - part
+    minSize: 200Gi
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: cluster.ocs.openshift.io/openshift-storage
+            operator: Exists
+  storageClassName: lso-volumeset
+  tolerations:
+    - effect: NoSchedule
+      key: node.ocs.openshift.io/storage
+      operator: Equal
+      value: 'true'
+  volumeMode: Block

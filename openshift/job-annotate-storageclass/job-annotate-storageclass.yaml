@@ -1,0 +1,28 @@
+---
+# create one installplan-approver job per manual operator
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: annotate-storageclass
+  namespace: openshift-storage
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 10
+  activeDeadlineSeconds: 240
+  template:
+    spec:
+      containers:
+      - name: secret-creation
+        image: registry.redhat.io/openshift4/ose-cli-rhel9:latest
+        imagePullPolicy: Always
+        command:
+          - /bin/bash
+          - -c
+          - |
+            echo "Hello!! This is a test"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccount: job-patch-console
+      serviceAccountName: job-patch-console
+      terminationGracePeriodSeconds: 30

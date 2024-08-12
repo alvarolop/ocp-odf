@@ -1,0 +1,8 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - sa-job-annotate-storageclass.yaml
+  - cr-annotate-storageclass.yaml
+  - crb-job-annotate-storageclass.yaml
+  - job-annotate-storageclass.yaml
