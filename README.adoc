@@ -1,0 +1,94 @@
+= Red Hat OpenShift Data Foundation
+Álvaro López Medina <alopezme@redhat.com>
+v1.0, 2024-08
+// Metadata
+:description: This repository is my playground to deploy, configure, and use RH OpenShift Data Foundation.
+:keywords: openshift, red hat, ceph, odf
+// Create TOC wherever needed
+:toc: macro
+:sectanchors:
+:sectnumlevels: 2
+:sectnums: 
+:source-highlighter: pygments
+:imagesdir: docs/images
+// Start: Enable admonition icons
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+// Icons for GitHub
+:yes: :heavy_check_mark:
+:no: :x:
+endif::[]
+ifndef::env-github[]
+:icons: font
+// Icons not for GitHub
+:yes: icon:check[]
+:no: icon:times[]
+endif::[]
+// End: Enable admonition icons
+
+== Introduction
+
+OpenShift Data Foundation (ODF) provides a scalable, software-defined storage solution integrated with OpenShift, using Ceph for dynamic storage provisioning. It ensures high availability, data protection, and persistent storage for containerized applications. ODF supports block, file, and object storage, catering to diverse application needs. It simplifies storage management and enhances operational efficiency within OpenShift environments.
+
+== Prerequisites
+
+To ensure that your OpenShift cluster is properly configured with storage nodes, follow the steps below to label and taint the nodes appropriately.
+
+
+=== Cluster with Storage Nodes
+
+For optimal performance, particularly with storage-intensive workloads, we recommend using the following AWS instance type:
+
+* `m6id.4xlarge`
+
+This instance type provides a good balance of compute, memory, and local NVMe storage, making it suitable for OpenShift storage nodes.
+
+NOTE: If your cluster is not on AWS, check the recommendations from your cloud provider.
+
+
+
+=== Label the Nodes Properly
+
+First, define the nodes that will be used for storage. Next, apply the necessary labels and taints to these nodes:
+
+[source,bash]
+----
+ODF_NODES="nodeA nodeB nodeC"
+for node in $ODF_NODES; do oc label node ${node}.eu-west-1.compute.internal cluster.ocs.openshift.io/openshift-storage=""; done
+
+for node in $ODF_NODES; do oc label node ${node}.eu-west-1.compute.internal node-role.kubernetes.io/infra=""; done
+
+for node in $ODF_NODES; do oc adm taint node ${node}.eu-west-1.compute.internal node.ocs.openshift.io/storage="true":NoSchedule; done
+----
+
+These commands will:
+* Label the nodes for OpenShift Data Foundation (OCS) storage.
+* Assign the nodes to the `infra` role.
+* Taint the nodes to ensure they are used exclusively for storage, preventing other workloads from being scheduled on them.
+
+
+
+
+
+== Installation
+
+In this repository, we have automated the deployment and configuration of the OpenShift environment using GitOps principles, managed through ArgoCD. Create the ArgoCD Application using the following command:
+
+
+[source, bash]
+----
+oc apply -f application-ocp-odf.yaml
+----
+
+
+Key components include:
+
+* *job-annotate-storageclass*: A job designed to automate the annotation of storage classes, ensuring that the appropriate default settings are applied to your storage configurations.
+* *job-enable-console-plugin*: This job enables specific console plugins, like the ODF console, to enhance the user experience and provide additional functionality in the OpenShift web console.
+* *lso-operator*: Deploys and configures the Local Storage Operator (LSO), managing local storage resources and ensuring they are available for use in the cluster.
+* *odf-operator*: Deploys the OpenShift Data Foundation (ODF) operator, which is essential for managing storage solutions within the cluster, providing integrated and scalable storage services.
+* *storagecluster-ocs-storagecluster*: Defines and deploys the OpenShift Container Storage (OCS) storage cluster, ensuring high availability and robust storage management for the cluster.
