@@ -22,7 +22,7 @@ spec:
           - |
             if ! oc get console.operator.openshift.io cluster -o yaml  | grep "odf-console";
             then
-              oc patch console.operator.openshift.io cluster --type=json
+              oc patch console.operator.openshift.io cluster --type=json \
               --patch '[{"op":"add","path":"/spec/plugins/-","value":"odf-console"}]'
             fi
       dnsPolicy: ClusterFirst
