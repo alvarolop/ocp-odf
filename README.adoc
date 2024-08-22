@@ -92,3 +92,21 @@ Key components include:
 * *lso-operator*: Deploys and configures the Local Storage Operator (LSO), managing local storage resources and ensuring they are available for use in the cluster.
 * *odf-operator*: Deploys the OpenShift Data Foundation (ODF) operator, which is essential for managing storage solutions within the cluster, providing integrated and scalable storage services.
 * *storagecluster-ocs-storagecluster*: Defines and deploys the OpenShift Container Storage (OCS) storage cluster, ensuring high availability and robust storage management for the cluster.
+
+
+
+
+= StorageClass volumeMode vs PVC volumeMode
+
+Understanding the interaction between StorageClass and PersistentVolumeClaim (PVC) volume modes is crucial for correctly setting up storage in Kubernetes.
+
+* *StorageClass volumeMode*: A StorageClass can *provision storage* in two main modes:
+** Block: The storage is provisioned as a raw block device.
+** Filesystem: The storage is provisioned as a filesystem. This is the most common setup, where Kubernetes automatically creates a filesystem on the volume.
+
+* *PVC volumeMode*: The volumeMode in a PVC determines how the provisioned storage *is presented to the pod*:
+** Filesystem: The volume is mounted as a filesystem, which is typically the default and most common mode. Kubernetes handles the filesystem creation, making the volume ready for file-based operations.
+** Block: The volume is exposed as a raw block device, which can be useful for applications requiring direct disk access.
+** More info https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-mode[here].
+
+NOTE: The most common configuration is `filesystem` for the PVC.
