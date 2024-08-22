@@ -96,7 +96,7 @@ Key components include:
 
 
 
-= StorageClass volumeMode vs PVC volumeMode
+== StorageClass volumeMode vs PVC volumeMode
 
 Understanding the interaction between StorageClass and PersistentVolumeClaim (PVC) volume modes is crucial for correctly setting up storage in Kubernetes.
 
