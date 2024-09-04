@@ -1,0 +1,12 @@
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-adp
+  namespace: openshift-adp
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  targetNamespaces:
+    - openshift-adp
+  upgradeStrategy: Default
