@@ -11,8 +11,8 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    path: openshift
-    repoURL: https://github.com/alvarolop/ocp-odf.git
+    path: odf
+    repoURL: https://github.com/alvarolop/ocp-storage.git
     targetRevision: main
   syncPolicy:
     automated:
