@@ -4,8 +4,10 @@ kind: ObjectBucketClaim
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
-  name: s3-bucket-oadp
+  name: s3-bucket-oadp-velero
   namespace: openshift-adp
 spec:
-  objectBucketName: s3-bucket-oadp
+  # Using hardcoded bucketName for gitOps simplicity
+  bucketName: s3-bucket-oadp-velero
+  # generateBucketName: s3-bucket-oadp 
   storageClassName: openshift-storage.noobaa.io
