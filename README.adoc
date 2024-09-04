@@ -30,16 +30,19 @@ ifndef::env-github[]
 endif::[]
 // End: Enable admonition icons
 
+// Create the Table of contents here
+toc::[]
+
 == Introduction
 
 OpenShift Data Foundation (ODF) provides a scalable, software-defined storage solution integrated with OpenShift, using Ceph for dynamic storage provisioning. It ensures high availability, data protection, and persistent storage for containerized applications. ODF supports block, file, and object storage, catering to diverse application needs. It simplifies storage management and enhances operational efficiency within OpenShift environments.
 
 == Prerequisites
 
-To ensure that your OpenShift cluster is properly configured with storage nodes, follow the steps below to label and taint the nodes appropriately.
+To ensure that your OpenShift cluster is properly configured with storage nodes, follow the steps below to label and taint the nodes appropriately. There are two alternatives. If you already have nodes for ODF, use `Option 2`. If you need to create them and use IPI AWS, please, use `Option 1`.
 
 
-=== Cluster with Storage Nodes
+=== Option 1: Cluster with Storage Nodes
 
 For optimal performance, particularly with storage-intensive workloads, we recommend using the following AWS instance type:
 
@@ -50,10 +53,21 @@ This instance type provides a good balance of compute, memory, and local NVMe st
 NOTE: If your cluster is not on AWS, check the recommendations from your cloud provider.
 
 
+[source, bash]
+----
+for az in a b c; do \
+oc process -f prerequisites/template-odf-nodes.yaml \
+    -p INFRASTRUCTURE_ID=$(oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster) \
+    -p INSTANCE_TYPE="m6id.4xlarge" -p AZ=$az | \
+    oc apply -n openshift-machine-api -f - 
+done
+----
+=== Option 2: Label the Nodes Properly
 
-=== Label the Nodes Properly
+IMPORTANT: The previous `Template` already provided labels and taints for the ODF nodes. Do not execute the following commands if you created the nodes using the prerequisites template.
 
-First, define the nodes that will be used for storage. Next, apply the necessary labels and taints to these nodes:
+
+Define the nodes that will be used for storage. Next, apply the necessary labels and taints to these nodes:
 
 [source,bash]
 ----
@@ -74,7 +88,7 @@ These commands will:
 
 
 
-== Installation
+== ODF Installation
 
 In this repository, we have automated the deployment and configuration of the OpenShift environment using GitOps principles, managed through ArgoCD. Create the ArgoCD Application using the following command:
 
@@ -95,8 +109,35 @@ Key components include:
 
 
 
+== OpenShift Backup alternatives
 
-== StorageClass volumeMode vs PVC volumeMode
+NOTE: This section is based on this https://www.redhat.com/architect/volsync-acm-add-on[Blog].
+
+There are multiple ways to tackle this problem, including:
+
+* The https://docs.openshift.com/container-platform/4.16/backup_and_restore/application_backup_and_restore/oadp-intro.html[Red Hat OpenShift Application Data Protection] (OADP) operator. It offers comprehensive disaster recovery protection, covering OpenShift Container Platform applications, application-related cluster resources, persistent volumes, and internal images. OADP is also capable of backing up both containerized applications and virtual machines (VMs).
+* https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.16/html-single/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index#introduction-to-odf-dr-solutions_common[OpenShift Data Foundations (ODF) Disaster Recovery] tooling which provides synchronized or asynchronous data replication between clusters, ensuring minimal downtime and data loss during site or regional failures. These solutions integrate with Red Hat's Advanced Cluster Management for automated failover and recovery
+* Various third-party solutions.
+
+
+== OpenShift API for Data Protection
+
+https://docs.openshift.com/container-platform/4.16/backup_and_restore/application_backup_and_restore/oadp-intro.html[OADP is the OpenShift API for Data Protection] operator. This open source operator sets up and installs Velero on the OpenShift platform, allowing users to backup and restore applications. You can install it with the following ArgoCD `Application`:
+
+[source, bash]
+----
+oc apply -f application-ocp-oadp.yaml
+----
+
+
+
+
+
+
+
+
+
+== Annex: StorageClass volumeMode vs PVC volumeMode
 
 Understanding the interaction between StorageClass and PersistentVolumeClaim (PVC) volume modes is crucial for correctly setting up storage in Kubernetes.
 
