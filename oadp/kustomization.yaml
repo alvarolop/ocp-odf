@@ -5,3 +5,4 @@ resources:
 
   - oadp-operator
   - job-odf-s3-secret
+  - dpa-velero.yaml

@@ -1,0 +1,39 @@
+---
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: velero
+  namespace: openshift-adp
+spec:
+  backupLocations:
+    - velero:
+        config:
+          profile: default
+          region: "odf"
+          s3ForcePathStyle: "true"
+          s3Url: "http://s3.openshift-storage.svc/" 
+        credential:
+          key: cloud
+          name: cloud-credentials
+        default: true
+        objectStorage:
+          bucket: s3-bucket-oadp
+          prefix: velero
+        provider: aws
+  configuration:
+    nodeAgent:
+      enable: true
+      uploaderType: restic
+    velero:
+      defaultPlugins:
+        - openshift
+        - aws
+        - kubevirt
+  snapshotLocations:
+    - velero:
+        config:
+          profile: default
+          region: "odf"
+          s3ForcePathStyle: "true"
+          s3Url: "http://s3.openshift-storage.svc/"
+        provider: aws

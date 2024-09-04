@@ -3,9 +3,9 @@ apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
   annotations:
-    argocd.argoproj.io/sync-wave: "-5"
+    argocd.argoproj.io/sync-wave: "-10"
   name: s3-bucket-oadp
   namespace: openshift-adp
 spec:
-  generateBucketName: s3-bucket-oadp
+  objectBucketName: s3-bucket-oadp
   storageClassName: openshift-storage.noobaa.io
