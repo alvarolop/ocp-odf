@@ -6,7 +6,7 @@ namespace: openshift-adp
 
 resources:
   - job-odf-s3-secret.yaml
-  - obc-s3-bucket-oadp.yaml
+  - obc-s3-bucket-oadp-velero.yaml
   - role-odf-s3-secret.yaml
   - rolebinding-odf-s3-secret.yaml
   - sa-job-odf-s3-secret.yaml
