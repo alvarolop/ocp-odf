@@ -10,7 +10,6 @@ spec:
         config:
           profile: default
           region: "odf"
-          s3ForcePathStyle: "true"
           s3Url: "http://s3.openshift-storage.svc/" 
         credential:
           key: cloud
