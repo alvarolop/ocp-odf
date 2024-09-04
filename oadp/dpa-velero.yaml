@@ -17,7 +17,8 @@ spec:
           name: cloud-credentials
         default: true
         objectStorage:
-          bucket: s3-bucket-oadp-velero
+          # Bucket name is obc-<ns>-<obc-name>
+          bucket: obc-openshift-adp-s3-bucket-oadp-velero 
           prefix: velero
         provider: aws
   configuration:
