@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
 
   - oadp-operator
+  - job-odf-s3-secret

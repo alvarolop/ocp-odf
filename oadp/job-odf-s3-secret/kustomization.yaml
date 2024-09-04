@@ -1,0 +1,12 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: openshift-adp
+
+resources:
+  - job-odf-s3-secret.yaml
+  - obc-s3-bucket-oadp.yaml
+  - role-odf-s3-secret.yaml
+  - rolebinding-odf-s3-secret.yaml
+  - sa-job-odf-s3-secret.yaml
